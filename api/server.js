@@ -19,6 +19,9 @@ server.use(cors());
 server.use(express.json());
 server.use(cookieParser())
 
+server.get('/',()=>{
+	return {message:'potluck planner who dis?'}
+})
 server.use('/',registerRouter);
 server.use('/',loginRouter);
 server.use('/', restrict, usersRouter);
