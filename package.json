@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "server": "nodemon index.js",
+    "migrate": "knex migrate:latest",
+    "test": "cross-env NODE_ENV=testing jest api/server.test.js --watchAll --verbose --runInBand",
+    "codegrade": "cross-env NODE_ENV=testing jest project.test.js --watchAll --verbose --runInBand"
   },
   "repository": {
     "type": "git",
@@ -25,8 +29,11 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "helmet": "^4.4.1",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.16",
     "sqlite3": "^4.2.0"
