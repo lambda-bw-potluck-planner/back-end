@@ -10,11 +10,19 @@ const Users= require('./usersModel')
 
 // Post /api/users/:id/invitations done
 
-// Get /api/users/:id/invitations/:id
+// Get /api/users/:id/invitations/:id done
 
 router.get("/users", async (req, res, next) => {
 	try {
 		res.json(await Users.getUsers())
+	} catch(err) {
+		next(err)
+	}
+})
+
+router.get("/invites", async (req, res, next) => {
+	try {
+		res.json(await Users.getInvites())
 	} catch(err) {
 		next(err)
 	}
@@ -46,30 +54,26 @@ router.get('/users/:id/invitations', async (req, res, next) => {
         })}
         res.json(invite)
       }
-      // .then(invitations => {
-      //   if (invitations.length) {
-      //     res.json(invitations);
-      //   } else {
-      //     res.status(404).json({ message: 'Could not find invitations for this User' })
-      //   }
-      // })
       catch(err){
         next(err);
       };
   });
 
-  router.get("/users/:id/invitations/:inviteId ", async (req, res, next) => {
-	try {
-		const inviteInfo = await Users.getInviteById(req.params.id)
-		if (!inviteInfo) {
-      console.log(req.params)
-			return res.status(404).json({
-				message: "Invitation not found",
-			})
-		}		res.json(inviteInfo)
-	} catch (err) {
-		next(err)
-	}
+  router.get("/users/:id/invitations/:inviteId", (req, res, next) => {
+    Users.getInviteById(req.params.id, req.params.inviteId)
+    .then((invite) => {
+      if (invite) {
+        res.json(invite)
+      } else {
+        console.log(err)
+        res.status(404).json({
+          message: "Invite was not found",
+        })
+      }
+    }) .catch (err =>{
+      console.log(err)
+      next(err)
+    })
 })
 
   router.post('/users/:id/invitations', (req, res, next) => {

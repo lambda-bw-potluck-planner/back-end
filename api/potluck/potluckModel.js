@@ -4,13 +4,22 @@ const db= require("../../data/dbConfig")
 function getPotlucks() {
     return db("potlucks").select("*")
 }
+
+// GET/ItemsList
+function getItemsList() {
+    return db("itemsList as i")
+    .innerJoin('potlucks as p', 'i.potluckId', 'p.id')
+    .innerJoin('users as u', 'i.organizer', 'u.id')
+    .select('i.id', 'p.eventName', 'u.username as organizer', 'i.item' )
+
+}
 // GET/potlucks/:id/items
 function getItems(potluckId) {
     return db('itemsList as i')
     .innerJoin('potlucks as p', 'i.potluckId', 'p.id')
     .innerJoin('users as u', 'i.organizer', 'u.id')
     .where('p.id', potluckId) 
-    .select('i.id', 'p.eventName', 'u.username', 'i.item' )
+    .select('i.id', 'p.eventName', 'u.username as organizer', 'i.item' )
 }
 // POST/potlucks
 async function addPotluck(potluck) {
@@ -28,31 +37,20 @@ function getPotluckById(id) {
 
 //  POST/potlucks/:id/items
 async function addItem(item, potluckId) {
-    // const [id] = await db('users_potlucks').insert(item)
-    // return getPotluckById(id)
     return db("itemsList")
-    // .innerJoin('invitations as i', 'up.attendee', 'i.invitee')
-    // .innerJoin('users as u', 'up.organizer', 'u.username')
-    // .innerJoin('potlucks as p', 'up.potluckId', 'p.id')
     .insert(item)
     .into("itemsList")
     .where("itemsList.potluckId",potluckId)
 }
-function findItems(id) {
-    return db("itemsList")
-    .select('*')
-    .where({id})
-    .first()
-}
-//  GET/potlucks/:id/items/:id
-async function getItemById(potluckId, itemId) {
-    
+
+//  GET/potlucks/:id/itemsList/:itemId
+function getItemById(potluckId, id) {
         return db('itemsList as i')
         .innerJoin('potlucks as p', 'i.potluckId', 'p.id')
         .innerJoin('users as u', 'i.organizer', 'u.id')
-        .where('p.id', potluckId) 
-        .select('i.id', 'p.eventName', 'u.username', 'i.item' )
-        .where('i,id',itemId)
+        .where({'i.id':id,'i.potluckId':potluckId})  
+        .select('i.id', 'p.eventName', 'u.username as organizer', 'i.item' )
+        .first()
 
     
 }
@@ -76,5 +74,5 @@ module.exports= {
     getItemById,
     update,
     remove,
-    findItems
+    getItemsList
 }

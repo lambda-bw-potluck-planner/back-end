@@ -1,16 +1,25 @@
-const { select } = require("../../data/dbConfig")
+const { select, innerJoin } = require("../../data/dbConfig")
 const db= require("../../data/dbConfig")
 // GET/users
 function getUsers() {
     return db("users").select("id", "fullName", "username","email")
 }
+
+function getInvites() {
+    return db("invitations as i")
+    .innerJoin("users as u", "i.inviter", "u.id")
+    .innerJoin("potlucks as p","i.potluckId","p.id")  
+    .select('i.id','u.username as organizer','i.invitee','p.eventName','i.attending')
+
+}
+
 //  GET/users/:id/invitations
 function getInvitations(userId) {
-    return db("invitations as inv")
-    .innerJoin("users as u", "inv.inviter", "u.id")
-    .innerJoin("potlucks as p","inv.potluckId","p.id")
+    return db("invitations as i")
+    .innerJoin("users as u", "i.inviter", "u.id")
+    .innerJoin("potlucks as p","i.potluckId","p.id")    
+    .select('i.id','u.username as organizer','i.invitee','p.eventName','i.attending')
     .where("u.id", userId)
-    .select("inv.id", "inv.inviter as inviter", "inv.invitee as invitee", "p.id as potluckId", "inv.attending")
 }
 
 //  POST/users/ 
@@ -30,15 +39,15 @@ function addInvitation(invite, userId) {
         .where("invitations.inviter",userId)
 }
 
-//  GET/users/:id/invitations/:id
-async function getInviteById(userId) {
-    const [id]= await db('users').getInvitations(userId)
-    return db("invitations as i")
-    .select('*')
-    // .innerJoin('potlucks as p', 'i.potluckId', 'p.id')
-    // .select("i.id", "i.inviter", "i.invitee","p.id", 'i.attending')
-    .where({ 'i.id': id })
-    .first()
+//  GET/users/:id/invitations/:inviteId
+function getInviteById(inviter,id) {
+        return db('invitations as i')
+        .innerJoin('users as u', 'i.inviter', 'u.id')
+        .innerJoin('potlucks as p', 'i.potluckId', 'p.id')        
+        .select('i.id','u.username','i.invitee','p.eventName','i.attending')
+        .where({'i.id':id,'i.inviter':inviter})  
+        .first()
+        
 }
 
 //  GET/users/:id
@@ -55,5 +64,6 @@ module.exports= {
     getUserById,
     addUser,
     addInvitation,
-    getInviteById
+    getInviteById,
+    getInvites
 }
