@@ -96,6 +96,22 @@ router.get('/users/:id/invitations', async (req, res, next) => {
         next(err)
       });
   });
+  router.put('/users/:id', async (req,res,next)=>{
+    try{
+
+        const editUser=await Users.update(req.params.id,req.body)
+        res.json(editUser)
+    }catch(err){
+        next(err)
+    }
+})
+
+router.delete('/users/:id', async (req,res,next)=>{
+    try{    
+         await Users.remove(req.params.id)
+            res.status(200).json({message: "User has been deleted."})
+    }catch(err){next(err)}
+})
 
 
 module.exports = router

@@ -2,7 +2,7 @@ const { select, innerJoin } = require("../../data/dbConfig")
 const db= require("../../data/dbConfig")
 // GET/users
 function getUsers() {
-    return db("users").select("id", "fullName", "username","email")
+    return db("users").select('*')
 }
 
 function getInvites() {
@@ -58,6 +58,16 @@ function getUserById(id) {
 		.first()
 }
 
+// PUT/users/:id
+async function update(id, data) {
+	await db("users").where({ id }).update(data)
+	return getUserById(id)
+}
+// DEL/users/:id
+function remove(id) {
+	return db("users").where({ id }).del()
+}
+
 module.exports= {
     getUsers,
     getInvitations,
@@ -65,5 +75,7 @@ module.exports= {
     addUser,
     addInvitation,
     getInviteById,
-    getInvites
+    getInvites,
+    update,
+    remove
 }

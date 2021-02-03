@@ -36,9 +36,9 @@ exports.up = async function(knex) {
     // .createTable('users_potlucks',(table) => {
       // table.text('inviteId').notNullable().references('id').inTable('invitations')
       // table.text('organizer').notNullable().references('username').inTable('users')
-      // table.text('attendee').notNullable().references('invitee').inTable('invitations')
-      // table.integer('potluckId').notNullable().references('id').inTable('potlucks')
-      // table.text('item')
+      // table.integer('guestId').notNullable().references('id').inTable('invitations')
+      // table.integer('potluckId').notNullable().references('potluckId').inTable('itemsList')
+      // table.integer('itemId').notNullable().references('id').inTable('itemsList')
       // table.primary(["inviteId", "potluckId"])
     // })
   }
@@ -46,6 +46,7 @@ exports.up = async function(knex) {
 
 exports.down = async function(knex) {
   await knex.schema
+  // .dropTableIfExists('users_potlucks')
   .dropTableIfExists('items')
   .dropTableIfExists('itemsList')
   .dropTableIfExists('invitations')
