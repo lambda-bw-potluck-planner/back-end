@@ -131,8 +131,8 @@ router.put('/potlucks/:id', async (req,res,next)=>{
 
 router.delete('/potlucks/:id', async (req,res,next)=>{
     try{    
-         await favChars.remove(req.params.id)
-            res.status(200).json({message: "I guess they arent one of my favs afterall."})
+         await Potlucks.remove(req.params.id)
+            res.status(200).json({message: "Potluck has been deleted."})
     }catch(err){next(err)}
 })
 
