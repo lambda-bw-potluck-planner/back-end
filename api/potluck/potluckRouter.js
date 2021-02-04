@@ -48,7 +48,6 @@ router.get("/potlucks/:id", async (req, res, next) => {
 })
 
 router.get("/potlucks/:id/itemsList/:itemId",  (req, res, next) => {
-  console.log(req.params)
    Potlucks.getItemById(req.params.id, req.params.itemId)
   .then((item) => {
     if (item) {
@@ -98,7 +97,7 @@ router.get('/potlucks/:id/itemsList', async (req, res, next) => {
       };
   });
 
-  router.post('/potlucks/:id/items', (req, res, next) => {
+  router.post('/potlucks/:id/itemsList', (req, res, next) => {
     const itemData = req.body;
     const { id } = req.params;
   
@@ -135,6 +134,50 @@ router.delete('/potlucks/:id', async (req,res,next)=>{
             res.status(200).json({message: "Potluck has been deleted."})
     }catch(err){next(err)}
 })
+
+router.post('/potlucks/:id/guests', (req, res, next) => {
+  const guestData = req.body;
+  const { id } = req.params;
+
+  Potlucks.getPotluckById(id)
+    .then(potluck => {
+      if (potluck) {
+        return Potlucks.addGuest(id, guestData);
+      } else {
+        res.status(404).json({ message: 'Could not find potluck with given id.' })
+      }
+    })
+    .then(guest => {
+      res.status(201).json(guest);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Failed to add guest' });
+      next(err)
+    });
+});
+
+router.get('/potlucks/:id/guests', async (req, res, next) => {
+  const { id } = req.params;
+
+  try{
+    const guest= await Potlucks.getGuests(id)
+    if (!guest) {
+      return res.status(404).json({
+        message: "guests not found",
+      })}
+      res.json(guest)
+    }
+    // .then(invitations => {
+    //   if (invitations.length) {
+    //     res.json(invitations);
+    //   } else {
+    //     res.status(404).json({ message: 'Could not find invitations for this User' })
+    //   }
+    // })
+    catch(err){
+      next(err);
+    };
+});
 
 module.exports = router
 

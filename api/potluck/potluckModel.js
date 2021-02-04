@@ -65,6 +65,29 @@ function remove(id) {
 	return db("potlucks").where({ id }).del()
 }
 
+// POST/potluck/:id/guests
+function addGuest(potluckId,guestData) {
+    return db('guests as g')
+    .insert(guestData)
+    .into('guests')
+    .where('g.potluckId',potluckId)
+    .innerJoin('potlucks as p','g.potluckId','p.id')
+    .innerJoin('itemsList as it','g.itemId','it.id')
+    .innerJoin('invitations as iv','g.InvitationId','iv.inviteId')
+    .select('p.eventName','iv.guest','it.item')
+    }
+// GET/potluck/:id/guests
+function getGuests(potluckId) {
+    return db('guests as g')
+    .innerJoin('potlucks as p','g.potluckId','p.id')
+    .innerJoin('itemsList as it','g.itemId','it.id')
+    .innerJoin('invitations as iv','g.InvitationId','iv.inviteId')
+    .where({'g.potluckId':potluckId})
+    .select('p.eventName','iv.guest','it.item')
+    
+
+}
+
 module.exports= {
     getPotlucks,
     getItems,
@@ -74,5 +97,8 @@ module.exports= {
     getItemById,
     update,
     remove,
-    getItemsList
+    getItemsList,
+    addGuest,
+    getGuests
+    
 }

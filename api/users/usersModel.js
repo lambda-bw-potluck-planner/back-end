@@ -7,18 +7,18 @@ function getUsers() {
 
 function getInvites() {
     return db("invitations as i")
-    .innerJoin("users as u", "i.inviter", "u.id")
+    .innerJoin("users as u", "i.organizer", "u.id")
     .innerJoin("potlucks as p","i.potluckId","p.id")  
-    .select('i.id','u.username as organizer','i.invitee','p.eventName','i.attending')
+    .select('i.inviteId','u.username as organizer','i.guest','p.eventName','i.attending')
 
 }
 
 //  GET/users/:id/invitations
 function getInvitations(userId) {
     return db("invitations as i")
-    .innerJoin("users as u", "i.inviter", "u.id")
+    .innerJoin("users as u", "i.organizer", "u.id")
     .innerJoin("potlucks as p","i.potluckId","p.id")    
-    .select('i.id','u.username as organizer','i.invitee','p.eventName','i.attending')
+    .select('i.inviteId','u.username as organizer','i.guest','p.eventName','i.attending')
     .where("u.id", userId)
 }
 
@@ -36,16 +36,16 @@ function addInvitation(invite, userId) {
     return db("invitations")
         .insert(invite)
         .into("invitations")
-        .where("invitations.inviter",userId)
+        .where("invitations.organizer",userId)
 }
 
 //  GET/users/:id/invitations/:inviteId
-function getInviteById(inviter,id) {
+function getInviteById(organizer,id) {
         return db('invitations as i')
-        .innerJoin('users as u', 'i.inviter', 'u.id')
+        .innerJoin('users as u', 'i.organizer', 'u.id')
         .innerJoin('potlucks as p', 'i.potluckId', 'p.id')        
-        .select('i.id','u.username','i.invitee','p.eventName','i.attending')
-        .where({'i.id':id,'i.inviter':inviter})  
+        .select('i.inviteId','u.username','i.guest','p.eventName','i.attending')
+        .where({'i.inviteId':id,'i.organizer':organizer})  
         .first()
         
 }
@@ -67,6 +67,7 @@ async function update(id, data) {
 function remove(id) {
 	return db("users").where({ id }).del()
 }
+
 
 module.exports= {
     getUsers,
