@@ -7,9 +7,11 @@
     "start": "node index.js",
     "server": "nodemon index.js",
     "migrate": "knex migrate:latest",
-    "test": "cross-env NODE_ENV=testing jest api/server.test.js --watchAll --verbose --runInBand",
-    "codegrade": "cross-env NODE_ENV=testing jest project.test.js --watchAll --verbose --runInBand"
+    "test": "cross-env DB_ENV=testing jest __tests__/potluckPlanner.test.js --watchAll --verbose --runInBand"
   },
+  "jest": {
+      "testEnvironment": "node"
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lambda-bw-potluck-planner/back-end.git"
